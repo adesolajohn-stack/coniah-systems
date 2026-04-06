@@ -2,248 +2,199 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONIAH PRO | Team Command</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CONIAH PRO | Mobile Ready</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --slate: #0f172a; --gold: #d4af37; --light-bg: #f8fafc; --border: #e2e8f0; --text: #334155; --danger: #ef4444; --success: #22c55e; --info: #3b82f6; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--light-bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; }
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 9999; background: var(--slate); }
-        .login-box { background: white; padding: 3rem; border-radius: 12px; width: 350px; text-align: center; border-top: 4px solid var(--gold); }
-        .login-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid var(--border); outline: none; }
-        .btn-action { background: var(--gold); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; margin-top: 10px; }
-        nav { width: 240px; background: var(--slate); color: white; padding: 2rem 1rem; display: flex; flex-direction: column; }
-        .nav-logo { font-weight: 800; color: var(--gold); font-size: 1.2rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; text-align: center; }
-        .nav-item { padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; font-size: 0.9rem; transition: 0.2s; }
+        
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--light-bg); color: var(--text); display: flex; flex-direction: row; height: 100vh; overflow: hidden; }
+
+        /* LOGIN SCREEN */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 9999; background: var(--slate); padding: 20px; }
+        .login-box { background: white; padding: 2rem; border-radius: 12px; width: 100%; max-width: 350px; text-align: center; border-top: 4px solid var(--gold); }
+        .login-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid var(--border); }
+        .btn-action { background: var(--gold); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; margin-top: 10px; }
+
+        /* NAVIGATION - Hidden on mobile, shown via menu button if needed, but for now we keep it simple */
+        nav { width: 240px; background: var(--slate); color: white; padding: 1.5rem 1rem; display: flex; flex-direction: column; flex-shrink: 0; }
+        .nav-logo { font-weight: 800; color: var(--gold); font-size: 1.1rem; margin-bottom: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .nav-item { padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; font-size: 0.85rem; transition: 0.2s; }
         .nav-item.active { background: var(--gold); color: white; font-weight: 700; }
+
         main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        .header-bar { height: 60px; background: white; border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header-bar { min-height: 60px; background: white; border-bottom: 1px solid var(--border); padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        
         .dashboard-layout { display: flex; flex: 1; overflow: hidden; }
-        .work-area { flex: 3; padding: 2rem; overflow-y: auto; }
-        .schedule-column { flex: 1; background: white; border-left: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; overflow-y: auto; min-width: 320px; }
-        .section-title { font-size: 0.85rem; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-bottom: 1.5rem; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
-        .job-card { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 12px; position: relative; border: 1px solid var(--border); }
-        .job-card b { display: block; font-size: 0.9rem; color: var(--slate); margin-bottom: 2px; }
-        .job-card i { display: block; font-size: 0.75rem; color: var(--gold); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
-        .due-tag { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; margin-top: 10px; display: inline-block; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1); }
-        @keyframes flash-red { 0%, 100% { background: #fee2e2; border-color: var(--danger); } 50% { background: var(--danger); color: white; } }
-        @keyframes flash-green { 0%, 100% { background: #dcfce7; border-color: var(--success); } 50% { background: var(--success); color: white; } }
-        .alert-urgent { animation: flash-red 1.5s infinite; } 
-        .alert-upcoming { animation: flash-green 2.5s infinite; } 
-        .admin-only-box { background: #fffbeb; border: 1px dashed var(--gold); padding: 15px; border-radius: 8px; margin-top: auto; }
-        .view { display: none; }
-        .active-view { display: block; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
-        th { text-align: left; padding: 12px; background: #f8fafc; border-bottom: 2px solid var(--border); font-size: 0.7rem; color: #64748b; }
-        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
+        .work-area { flex: 2; padding: 1.5rem; overflow-y: auto; }
+        .schedule-column { flex: 1; background: white; border-left: 1px solid var(--border); padding: 1.5rem; overflow-y: auto; min-width: 300px; }
+
+        /* MOBILE FIXES (Media Query) */
+        @media (max-width: 850px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            nav { width: 100%; height: auto; padding: 10px; }
+            .nav-item { display: inline-block; margin-right: 5px; padding: 8px 12px; font-size: 0.75rem; }
+            .dashboard-layout { flex-direction: column; overflow: visible; }
+            main { height: auto; overflow: visible; }
+            .work-area, .schedule-column { width: 100%; border: none; height: auto; overflow: visible; padding: 1rem; }
+            .header-bar { padding: 10px; font-size: 0.8rem; }
+        }
+
+        /* TABLES & CARDS */
+        .table-wrap { overflow-x: auto; width: 100%; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; }
+        .job-card { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .section-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid var(--gold); display: inline-block; }
+
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
         .badge-prog { background: #dbeafe; color: #1e40af; }
-        .badge-pend { background: #fef3c7; color: #92400e; }
-        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 0.85rem; }
     </style>
 </head>
 <body>
+
     <div id="login-overlay">
-        <form class="login-box" onsubmit="event.preventDefault(); handleLogin();">
+        <div class="login-box">
             <h2 style="margin:0; color:var(--slate);">CONIAH PRO</h2>
-            <p style="font-size:0.7rem; color:#94a3b8; margin-bottom:20px;">ENGINEERING COMMAND</p>
-            <input type="text" id="user-in" placeholder="Username" required>
-            <input type="password" id="pass-in" placeholder="Password" required>
-            <button type="submit" class="btn-action">Authorize</button>
-            <p id="err" style="color:red; display:none; font-size:0.8rem; margin-top:10px;">DENIED</p>
-        </form>
+            <input type="text" id="user-in" placeholder="Username">
+            <input type="password" id="pass-in" placeholder="Password">
+            <button class="btn-action" onclick="handleLogin()">Authorize</button>
+        </div>
     </div>
-    <nav>
+
+    <nav id="sidebar">
         <div class="nav-logo">CONIAH PRO</div>
         <div class="nav-item active" onclick="switchView('log-view', this)">📝 Log Job</div>
         <div class="nav-item" onclick="switchView('live-ops-view', this)">⚡ Live Ops</div>
         <div class="nav-item" onclick="switchView('track-view', this)">📂 My History</div>
-        <div id="admin-nav" class="nav-item" style="display:none;" onclick="switchView('history-view', this)">👑 Admin Master</div>
-        <div class="nav-item" style="margin-top:auto; color:#fca5a5;" onclick="location.reload()">🔒 Logout</div>
+        <div id="admin-nav" class="nav-item" style="display:none;" onclick="switchView('history-view', this)">👑 Master DB</div>
+        <div class="nav-item" style="margin-top:20px; color:#fca5a5;" onclick="location.reload()">🔒 Logout</div>
     </nav>
+
     <main>
         <div class="header-bar">
-            <div id="user-display" style="font-weight:700; font-size:0.85rem; color: var(--slate);"></div>
+            <div id="user-display" style="font-weight:700; color: var(--slate);"></div>
             <div id="mini-clock" style="font-weight:800; color:var(--gold);">00:00:00</div>
         </div>
+
         <div class="dashboard-layout">
             <div class="work-area">
                 <div id="log-view" class="view active-view">
-                    <h3>Submit Activity Report</h3>
+                    <h3 class="section-title">New Report</h3>
                     <form id="taskForm">
                         <select id="client-list" required>
-                            <option value="">-- Choose Client --</option>
+                            <option value="">-- Client --</option>
                             <option>ADIGUN OGUNSEITAN</option><option>CUSTODIAN INSURANCE</option>
                             <option>FAMILY 1ST</option><option>FARINDE OLATEJU</option>
-                            <option>GIWA OSAGIE & CO</option><option>HABCOM LIMITED</option>
-                            <option>INTERSTATE SECURITIES LTD</option><option>EMDI CAPACITY</option>
-                            <option>ILUPEJU LIBRARY</option><option>LAGOS CITY COLLEGE</option>
+                            <option>LAGOS CITY COLLEGE</option><option>YABATECH</option>
                         </select>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                            <input type="text" id="serial" placeholder="Asset Serial No">
-                            <select id="category">
-                                <option>Repair Job</option><option>Printer Maintenance</option>
-                                <option>Printer Repair</option><option>Preventive Maintenance</option>
-                                <option>New System Setup</option><option>Networking Support</option>
-                            </select>
-                        </div>
+                        <input type="text" id="serial" placeholder="Serial No">
+                        <select id="category">
+                            <option>Printer Repair</option><option>Printer Maintenance</option>
+                            <option>System Repair</option><option>Preventive Maintenance</option>
+                        </select>
                         <select id="status">
                             <option value="Completed">Completed</option>
                             <option value="In-Progress">In-Progress</option>
-                            <option value="Pending">Pending</option>
                         </select>
-                        <textarea id="sao" rows="4" placeholder="Report (Situation, Action, Outcome)"></textarea>
-                        <button type="submit" class="btn-action">Sync to Cloud</button>
+                        <textarea id="sao" rows="3" placeholder="Description..."></textarea>
+                        <button type="submit" class="btn-action">Submit Job</button>
                     </form>
                 </div>
+
                 <div id="live-ops-view" class="view">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3>Active Workshop (Jobs in Hand)</h3>
-                        <span style="font-size:0.7rem; color:var(--info); font-weight:bold;">● LIVE TEAM VIEW</span>
+                    <h3 class="section-title">Live Team Ops</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Engr</th><th>Client</th><th>Status</th></tr></thead>
+                            <tbody id="liveOpsBody"></tbody>
+                        </table>
                     </div>
-                    <table id="liveOpsTable">
-                        <thead><tr><th>Engineer</th><th>Client</th><th>Job Type</th><th>Status</th><th>Date</th></tr></thead>
-                        <tbody id="liveOpsBody"></tbody>
-                    </table>
                 </div>
+
                 <div id="track-view" class="view">
-                    <h3>My Logs</h3>
-                    <table id="myTable"><thead><tr><th>Date</th><th>Client</th><th>Status</th></tr></thead><tbody id="myHistoryBody"></tbody></table>
-                </div>
-                <div id="history-view" class="view">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3>Master Database</h3>
-                        <button class="btn-action" style="width:auto; padding:5px 15px;" onclick="exportToCSV()">Export Excel</button>
+                    <h3 class="section-title">My History</h3>
+                    <div class="table-wrap">
+                        <table id="myTable"><tbody id="myHistoryBody"></tbody></table>
                     </div>
-                    <table><thead><tr><th>Date</th><th>Engineer</th><th>Client</th><th>Status</th></tr></thead><tbody id="adminBody"></tbody></table>
                 </div>
             </div>
+
             <div class="schedule-column">
-                <div class="section-title">Monthly Schedule 📅</div>
+                <h3 class="section-title">Monthly Targets</h3>
                 <div id="target-list"></div>
-                <div id="admin-target-area" class="admin-only-box" style="display:none;">
-                    <b style="font-size:0.75rem; color:var(--gold); display:block; margin-bottom:8px;">ADMIN: ADD MONTHLY JOB</b>
-                    <select id="new-target-title">
-                        <option value="">-- Choose Client --</option>
-                        <option>ADIGUN OGUNSEITAN</option><option>CUSTODIAN INSURANCE</option>
-                        <option>FAMILY 1ST</option><option>FARINDE OLATEJU</option>
-                        <option>GIWA OSAGIE & CO</option><option>HABCOM LIMITED</option>
-                        <option>INTERSTATE SECURITIES LTD</option><option>EMDI CAPACITY</option>
-                        <option>ILUPEJU LIBRARY</option><option>LAGOS CITY COLLEGE</option>
-                    </select>
-                    <select id="new-target-jobtype">
-                        <option value="Repair Job">Repair Job</option>
-                        <option value="Printer Maintenance">Printer Maintenance</option>
-                        <option value="Preventive Maintenance">Preventive Maintenance</option>
-                        <option value="New System Setup">New System Setup</option>
-                    </select>
+                <div id="admin-target-area" class="admin-only-box" style="display:none; margin-top:20px;">
+                    <b>ADMIN: POST JOB</b>
                     <input type="date" id="new-target-date">
-                    <textarea id="new-target-desc" placeholder="Notes..." rows="2"></textarea>
-                    <button class="btn-action" style="font-size:0.7rem;" onclick="saveNewTarget()">Post Notice</button>
+                    <input type="text" id="new-target-title" placeholder="Client Name">
+                    <button class="btn-action" onclick="saveNewTarget()">Post Notice</button>
                 </div>
             </div>
         </div>
     </main>
+
     <script>
+        const logins = {"ADMIN": "coniah247", "Engr. Rasheed": "12345", "Engr. David": "12345"};
         let currentUser = "";
-        const logins = {"ADMIN": "coniah247", "Engr. Rasheed": "12345", "Engr. David": "12345", "Engr. Segun": "12345"};
+
         function handleLogin() {
             const u = document.getElementById('user-in').value;
             const p = document.getElementById('pass-in').value;
-            if (logins[u] && logins[u] === p) {
+            if (logins[u] === p) {
                 currentUser = u;
                 document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('user-display').innerText = `ENGR: ${u}`;
+                document.getElementById('user-display').innerText = u;
                 if (u === "ADMIN") {
                     document.getElementById('admin-nav').style.display = 'block';
                     document.getElementById('admin-target-area').style.display = 'block';
                 }
                 updateClock();
                 renderTargets();
-            } else { document.getElementById('err').style.display = 'block'; }
+            } else { alert("ACCESS DENIED"); }
         }
+
         function updateClock() {
             document.getElementById('mini-clock').innerText = new Date().toLocaleTimeString('en-GB');
             setTimeout(updateClock, 1000);
         }
-        function saveNewTarget() {
-            const title = document.getElementById('new-target-title').value;
-            const jobtype = document.getElementById('new-target-jobtype').value;
-            const date = document.getElementById('new-target-date').value;
-            const desc = document.getElementById('new-target-desc').value;
-            if(!title || !date) return alert("Select Client and Date");
-            const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
-            targets.push({title, jobtype, date, desc});
-            localStorage.setItem('coniah_targets', JSON.stringify(targets));
-            renderTargets();
-            document.getElementById('new-target-desc').value = ""; 
-        }
-        function renderTargets() {
-            const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
-            const list = document.getElementById('target-list');
-            const today = new Date(); today.setHours(0,0,0,0);
-            list.innerHTML = targets.map((t, idx) => {
-                const dueDate = new Date(t.date); dueDate.setHours(0,0,0,0);
-                const diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
-                let alertClass = ""; let statusText = `Due: ${t.date}`;
-                if (diffDays === 1) { alertClass = "alert-urgent"; statusText = "⚠️ DUE TOMORROW!"; }
-                else if (diffDays === 2) { alertClass = "alert-upcoming"; statusText = "📅 DUE IN 2 DAYS"; }
-                else if (diffDays <= 0) { statusText = "❌ OVERDUE / TODAY"; }
-                return `<div class="job-card ${alertClass}"><b>${t.title}</b><i>${t.jobtype}</i><p style="font-size:0.75rem;">${t.desc}</p><span class="due-tag">${statusText}</span>${currentUser === 'ADMIN' ? `<br><small onclick="deleteTarget(${idx})" style="color:red; cursor:pointer;">[REMOVE]</small>` : ''}</div>`;
-            }).join('');
-        }
-        function deleteTarget(idx) {
-            let targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
-            targets.splice(idx, 1);
-            localStorage.setItem('coniah_targets', JSON.stringify(targets));
-            renderTargets();
-        }
-        function switchView(viewId, element) {
+
+        function switchView(viewId, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(viewId).classList.add('active-view');
-            element.classList.add('active');
+            el.classList.add('active');
             if(viewId === 'live-ops-view') renderLiveOps();
-            if(viewId === 'track-view') renderMyHistory();
-            if(viewId === 'history-view') renderAdminMaster();
         }
+
         document.getElementById('taskForm').onsubmit = function(e) {
             e.preventDefault();
             const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            logs.unshift({ 
-                t: new Date().toLocaleDateString('en-GB'), 
-                e: currentUser, 
-                c: document.getElementById('client-list').value, 
-                cat: document.getElementById('category').value,
-                st: document.getElementById('status').value 
-            });
+            logs.unshift({ t: new Date().toLocaleDateString('en-GB'), e: currentUser, c: document.getElementById('client-list').value, st: document.getElementById('status').value });
             localStorage.setItem('coniah_logs', JSON.stringify(logs));
-            alert("Sync Successful!");
+            alert("Job Logged!");
             this.reset();
         };
+
         function renderLiveOps() {
             const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            const activeJobs = logs.filter(l => l.st !== "Completed");
-            document.getElementById('liveOpsBody').innerHTML = activeJobs.map(l => `
-                <tr><td style="font-weight:bold;">${l.e}</td><td>${l.c}</td><td>${l.cat}</td><td><span class="badge ${l.st==='In-Progress'?'badge-prog':'badge-pend'}">${l.st}</span></td><td>${l.t}</td></tr>
-            `).join('');
-            if(activeJobs.length === 0) document.getElementById('liveOpsBody').innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px; color:#94a3b8;'>No active jobs in hand.</td></tr>";
+            const active = logs.filter(l => l.st !== "Completed");
+            document.getElementById('liveOpsBody').innerHTML = active.map(l => `<tr><td>${l.e}</td><td>${l.c}</td><td><span class="badge badge-prog">${l.st}</span></td></tr>`).join('') || "<tr><td colspan='3'>No active jobs</td></tr>";
         }
-        function renderMyHistory() {
-            const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            document.getElementById('myHistoryBody').innerHTML = logs.filter(l => l.e === currentUser).map(l => `<tr><td>${l.t}</td><td>${l.c}</td><td>${l.st}</td></tr>`).join('');
+
+        function renderTargets() {
+            const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
+            document.getElementById('target-list').innerHTML = targets.map(t => `<div class="job-card"><b>${t.title}</b><br><small>${t.date}</small></div>`).join('');
         }
-        function renderAdminMaster() {
-            const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            document.getElementById('adminBody').innerHTML = logs.map(l => `<tr><td>${l.t}</td><td>${l.e}</td><td>${l.c}</td><td>${l.st}</td></tr>`).join('');
-        }
-        function exportToCSV() {
-            const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            let csv = "Date,Engineer,Client,JobType,Status\n";
-            logs.forEach(l => { csv += `${l.t},${l.e},"${l.c}","${l.cat}",${l.st}\n`; });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `CONIAH_MASTER.csv`; a.click();
+
+        function saveNewTarget() {
+            const title = document.getElementById('new-target-title').value;
+            const date = document.getElementById('new-target-date').value;
+            const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
+            targets.push({title, date});
+            localStorage.setItem('coniah_targets', JSON.stringify(targets));
+            renderTargets();
         }
     </script>
 </body>
