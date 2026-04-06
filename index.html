@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CONIAH PRO | Systems Support</title>
+    <title>CONIAH PRO | Live Systems Support</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --slate: #0f172a; --gold: #d4af37; --light-bg: #f8fafc; --border: #e2e8f0; --text: #334155; --success: #10b981; }
         * { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; margin: 0; background: var(--light-bg); color: var(--text); display: flex; flex-direction: row; height: 100vh; overflow: hidden; }
 
-        /* FLASH MESSAGE SYSTEM */
-        #flash-msg { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 15px 30px; border-radius: 8px; font-weight: 700; z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 15px rgba(16, 185, 129, 0.2); display: flex; align-items: center; gap: 10px; }
+        #flash-msg { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 15px 30px; border-radius: 8px; font-weight: 700; z-index: 10000; transition: 0.5s; box-shadow: 0 10px 15px rgba(16, 185, 129, 0.2); }
         #flash-msg.show { top: 20px; }
 
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 9999; background: var(--slate); padding: 20px; }
         .login-box { background: white; padding: 2rem; border-radius: 12px; width: 100%; max-width: 350px; text-align: center; border-top: 4px solid var(--gold); }
         .login-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid var(--border); outline: none; }
-        .btn-action { background: var(--gold); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
         
         nav { width: 240px; background: var(--slate); color: white; padding: 1.5rem 1rem; display: flex; flex-direction: column; flex-shrink: 0; }
         .nav-logo { font-weight: 800; color: var(--gold); font-size: 1.1rem; margin-bottom: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
@@ -43,16 +41,15 @@
         table { width: 100%; border-collapse: collapse; min-width: 500px; }
         th { text-align: left; padding: 12px; background: #f8fafc; font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
         td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
+        .btn-action { background: var(--gold); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; font-family: inherit; }
         .job-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .section-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid var(--gold); display: inline-block; color: var(--slate); }
-
-        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; font-family: inherit; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; background: #dbeafe; color: #1e40af; }
     </style>
 </head>
 <body>
 
-    <div id="flash-msg">✅ Sync Successful</div>
+    <div id="flash-msg">✅ Live Cloud Sync Successful</div>
 
     <div id="login-overlay">
         <div class="login-box">
@@ -119,17 +116,17 @@
                     <h3 class="section-title">Team Live Operations</h3>
                     <div class="table-wrap">
                         <table>
-                            <thead><tr><th>Engineer</th><th>Client</th><th>Task</th><th>Status</th></tr></thead>
+                            <thead><tr><th>Time Stamp</th><th>Engineer</th><th>Client</th><th>Status</th></tr></thead>
                             <tbody id="liveOpsBody"></tbody>
                         </table>
                     </div>
                 </div>
 
                 <div id="history-view" class="view" style="display:none;">
-                    <h3 class="section-title">Master Database</h3>
+                    <h3 class="section-title">Cloud Master Database</h3>
                     <div class="table-wrap">
                         <table>
-                            <thead><tr><th>Date</th><th>Engineer</th><th>Client</th><th>Status</th></tr></thead>
+                            <thead><tr><th>Date & Time</th><th>Engineer</th><th>Client</th><th>Status</th></tr></thead>
                             <tbody id="adminBody"></tbody>
                         </table>
                     </div>
@@ -161,106 +158,115 @@
         </div>
     </main>
 
-    <script>
-        const logins = {"ADMIN": "coniah247", "Engr. Rasheed": "12345", "Engr. David": "12345", "Engr. Segun": "12345"};
-        let currentUser = "";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        function handleLogin() {
+        // Your web app's Firebase configuration (Joined from your previous message)
+        const firebaseConfig = {
+          apiKey: "AIzaSyCNxbKXJPI5khIRLcORf1V3wMoEWkCy2xc",
+          authDomain: "coniahpro.firebaseapp.com",
+          projectId: "coniahpro",
+          storageBucket: "coniahpro.firebasestorage.app",
+          messagingSenderId: "73481603375",
+          appId: "1:73481603375:web:bf708249037a788894b9da"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const logins = {"ADMIN": "coniah247", "Engr. Rasheed": "12345", "Engr. David": "12345", "Engr. Segun": "12345"};
+        window.currentUser = "";
+
+        window.handleLogin = function() {
             const u = document.getElementById('user-in').value;
             const p = document.getElementById('pass-in').value;
             if (logins[u] && logins[u] === p) {
-                currentUser = u;
+                window.currentUser = u;
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('user-display').innerText = `ENGR: ${u.toUpperCase()}`;
-                if (u === "ADMIN") {
-                    document.getElementById('admin-nav').style.display = 'flex';
-                    document.getElementById('admin-target-area').style.display = 'block';
+                if (u === "ADMIN") { 
+                    document.getElementById('admin-nav').style.display = 'flex'; 
+                    document.getElementById('admin-target-area').style.display = 'block'; 
                 }
                 updateClock();
-                renderTargets();
+                listenToData();
             } else { alert("INVALID CREDENTIALS"); }
-        }
-
-        function showFlash() {
-            const f = document.getElementById('flash-msg');
-            f.classList.add('show');
-            setTimeout(() => f.classList.remove('show'), 3000);
-        }
+        };
 
         function updateClock() {
             document.getElementById('mini-clock').innerText = new Date().toLocaleTimeString('en-GB');
             setTimeout(updateClock, 1000);
         }
 
-        function switchView(viewId, el) {
+        window.switchView = function(viewId, el) {
             document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(viewId).style.display = 'block';
             el.classList.add('active');
-            if(viewId === 'live-ops-view') renderLiveOps();
-            if(viewId === 'history-view') renderAdminMaster();
-        }
+        };
 
-        document.getElementById('taskForm').onsubmit = function(e) {
+        document.getElementById('taskForm').onsubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.innerText = "Syncing...";
+            btn.innerText = "Connecting to Cloud...";
             btn.style.opacity = "0.5";
-
-            setTimeout(() => {
-                const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-                logs.unshift({ 
-                    t: new Date().toLocaleDateString('en-GB'), e: currentUser, 
-                    c: document.getElementById('client-list').value, 
-                    cat: document.getElementById('category').value, st: document.getElementById('status').value 
+            
+            const now = new Date();
+            const stamp = now.toLocaleDateString('en-GB') + " - " + now.toLocaleTimeString('en-GB', {hour: '2-digit', minute:'2-digit'});
+            
+            try {
+                await addDoc(collection(db, "logs"), {
+                    ts: stamp,
+                    e: window.currentUser,
+                    c: document.getElementById('client-list').value,
+                    st: document.getElementById('status').value,
+                    createdAt: Date.now()
                 });
-                localStorage.setItem('coniah_logs', JSON.stringify(logs));
                 
                 btn.innerText = "Sync Job to Cloud";
                 btn.style.opacity = "1";
-                showFlash(); // Trigger the green flash message
+                const f = document.getElementById('flash-msg');
+                f.classList.add('show');
+                setTimeout(() => f.classList.remove('show'), 3000);
                 this.reset();
-            }, 800);
+            } catch (err) { alert("Error connecting to Cloud. Check Firestore Rules!"); }
         };
 
-        function renderLiveOps() {
-            const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            const active = logs.filter(l => l.st !== "Completed");
-            document.getElementById('liveOpsBody').innerHTML = active.map(l => `<tr><td><b>${l.e}</b></td><td>${l.c}</td><td>${l.cat}</td><td><span class="badge">${l.st}</span></td></tr>`).join('') || "<tr><td colspan='4'>Clear.</td></tr>";
+        function listenToData() {
+            const q = query(collection(db, "logs"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                let html = "";
+                snapshot.forEach(doc => {
+                    const l = doc.data();
+                    html += `<tr><td><small>${l.ts}</small></td><td><b>${l.e}</b></td><td>${l.c}</td><td>${l.st}</td></tr>`;
+                });
+                document.getElementById('liveOpsBody').innerHTML = html || "<tr><td colspan='4'>No ops yet.</td></tr>";
+                document.getElementById('adminBody').innerHTML = html;
+            });
+
+            onSnapshot(collection(db, "targets"), (snapshot) => {
+                let html = "";
+                snapshot.forEach(docSnap => {
+                    const t = docSnap.data();
+                    html += `<div class="job-card"><b>${t.title}</b><br><small>📅 ${t.date}</small>${window.currentUser === 'ADMIN' ? `<br><small onclick="delT('${docSnap.id}')" style="color:red; cursor:pointer;">[REMOVE]</small>` : ''}</div>`;
+                });
+                document.getElementById('target-list').innerHTML = html || "<p>No schedule yet.</p>";
+            });
         }
 
-        function renderAdminMaster() {
-            const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            document.getElementById('adminBody').innerHTML = logs.map(l => `<tr><td>${l.t}</td><td>${l.e}</td><td>${l.c}</td><td>${l.st}</td></tr>`).join('');
-        }
-
-        function renderTargets() {
-            const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
-            document.getElementById('target-list').innerHTML = targets.map((t, idx) => `
-                <div class="job-card">
-                    <b>${t.title}</b><br><small>📅 ${t.date}</small>
-                    ${currentUser === 'ADMIN' ? `<br><small onclick="deleteTarget(${idx})" style="color:red; cursor:pointer;">[REMOVE]</small>` : ''}
-                </div>
-            `).join('') || "<p>No schedule.</p>";
-        }
-
-        function saveNewTarget() {
+        window.saveNewTarget = async function() {
             const title = document.getElementById('new-target-title').value;
             const date = document.getElementById('new-target-date').value;
             if(!title || !date) return;
-            const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
-            targets.push({title, date});
-            localStorage.setItem('coniah_targets', JSON.stringify(targets));
-            renderTargets();
+            await addDoc(collection(db, "targets"), {title, date});
             document.getElementById('new-target-title').value = "";
-        }
+        };
 
-        function deleteTarget(idx) {
-            let targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
-            targets.splice(idx, 1);
-            localStorage.setItem('coniah_targets', JSON.stringify(targets));
-            renderTargets();
-        }
+        window.delT = async function(id) {
+            if(confirm("Permanently remove this task?")) {
+                await deleteDoc(doc(db, "targets", id));
+            }
+        };
     </script>
 </body>
 </html>
