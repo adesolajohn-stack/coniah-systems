@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CONIAH PRO | Team Command</title>
+    <title>CONIAH PRO | Systems Support</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --slate: #0f172a; --gold: #d4af37; --light-bg: #f8fafc; --border: #e2e8f0; --text: #334155; --danger: #ef4444; --success: #22c55e; --info: #3b82f6; }
+        :root { --slate: #0f172a; --gold: #d4af37; --light-bg: #f8fafc; --border: #e2e8f0; --text: #334155; --success: #10b981; }
         * { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; margin: 0; background: var(--light-bg); color: var(--text); display: flex; flex-direction: row; height: 100vh; overflow: hidden; }
+
+        /* FLASH MESSAGE SYSTEM */
+        #flash-msg { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 15px 30px; border-radius: 8px; font-weight: 700; z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 15px rgba(16, 185, 129, 0.2); display: flex; align-items: center; gap: 10px; }
+        #flash-msg.show { top: 20px; }
 
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 9999; background: var(--slate); padding: 20px; }
         .login-box { background: white; padding: 2rem; border-radius: 12px; width: 100%; max-width: 350px; text-align: center; border-top: 4px solid var(--gold); }
         .login-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid var(--border); outline: none; }
         .btn-action { background: var(--gold); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
-
+        
         nav { width: 240px; background: var(--slate); color: white; padding: 1.5rem 1rem; display: flex; flex-direction: column; flex-shrink: 0; }
         .nav-logo { font-weight: 800; color: var(--gold); font-size: 1.1rem; margin-bottom: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         .nav-item { padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; font-size: 0.85rem; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
@@ -33,7 +37,6 @@
             .dashboard-layout { flex-direction: column; overflow: visible; }
             main { height: auto; overflow: visible; }
             .work-area, .schedule-column { width: 100%; border: none; height: auto; overflow: visible; padding: 1rem; }
-            .header-bar { padding: 10px; font-size: 0.8rem; background: #f1f5f9; }
         }
 
         .table-wrap { overflow-x: auto; width: 100%; background: white; border-radius: 8px; border: 1px solid var(--border); }
@@ -44,16 +47,17 @@
         .section-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid var(--gold); display: inline-block; color: var(--slate); }
 
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; font-family: inherit; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
-        .badge-prog { background: #dbeafe; color: #1e40af; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; background: #dbeafe; color: #1e40af; }
     </style>
 </head>
 <body>
 
+    <div id="flash-msg">✅ Sync Successful</div>
+
     <div id="login-overlay">
         <div class="login-box">
             <h2 style="margin:0; color:var(--slate); font-weight: 800;">CONIAH PRO</h2>
-            <p style="font-size:0.65rem; color:#94a3b8; margin-bottom:20px; letter-spacing: 1px;">SYSTEMS & LOGISTICS</p>
+            <p style="font-size:0.65rem; color:#94a3b8; margin-bottom:20px; letter-spacing: 1px;">SYSTEMS & SERVICE SUPPORT</p>
             <input type="text" id="user-in" placeholder="Username">
             <input type="password" id="pass-in" placeholder="Password">
             <button class="btn-action" onclick="handleLogin()">Authorize Access</button>
@@ -77,7 +81,7 @@
         <div class="dashboard-layout">
             <div class="work-area">
                 <div id="log-view" class="view active-view">
-                    <h3 class="section-title">New Activity Report</h3>
+                    <h3 class="section-title">Service Report</h3>
                     <form id="taskForm">
                         <select id="client-list" required>
                             <option value="">-- Choose Client --</option>
@@ -106,8 +110,8 @@
                             <option value="In-Progress">In-Progress</option>
                             <option value="Pending">Pending</option>
                         </select>
-                        <textarea id="sao" rows="3" placeholder="Notes..."></textarea>
-                        <button type="submit" class="btn-action">Sync Job to Cloud</button>
+                        <textarea id="sao" rows="3" placeholder="Service Details..."></textarea>
+                        <button type="submit" id="submitBtn" class="btn-action">Sync Job to Cloud</button>
                     </form>
                 </div>
 
@@ -133,12 +137,24 @@
             </div>
 
             <div class="schedule-column">
-                <h3 class="section-title">Monthly Schedule</h3>
+                <h3 class="section-title">Maintenance Schedule</h3>
                 <div id="target-list"></div>
                 <div id="admin-target-area" class="admin-only-box" style="display:none; margin-top:2rem; padding:15px; background:#fffbeb; border:1px dashed var(--gold); border-radius:8px;">
                     <b style="font-size:0.75rem; display:block; margin-bottom:10px;">ADMIN: ASSIGN TARGET</b>
                     <input type="date" id="new-target-date">
-                    <input type="text" id="new-target-title" placeholder="Client/Location">
+                    <select id="new-target-title">
+                        <option value="">-- Choose Client --</option>
+                        <option>ADIGUN OGUNSEITAN</option>
+                        <option>CUSTODIAN INSURANCE</option>
+                        <option>FAMILY 1ST</option>
+                        <option>FARINDE OLATEJU</option>
+                        <option>GIWA OSAGIE & CO</option>
+                        <option>HABCOM LIMITED</option>
+                        <option>INTERSTATE SECURITIES LTD</option>
+                        <option>EMDI CAPACITY</option>
+                        <option>ILUPEJU LIBRARY</option>
+                        <option>LAGOS CITY COLLEGE</option>
+                    </select>
                     <button class="btn-action" style="font-size:0.7rem; padding:8px;" onclick="saveNewTarget()">Post to Team</button>
                 </div>
             </div>
@@ -165,6 +181,12 @@
             } else { alert("INVALID CREDENTIALS"); }
         }
 
+        function showFlash() {
+            const f = document.getElementById('flash-msg');
+            f.classList.add('show');
+            setTimeout(() => f.classList.remove('show'), 3000);
+        }
+
         function updateClock() {
             document.getElementById('mini-clock').innerText = new Date().toLocaleTimeString('en-GB');
             setTimeout(updateClock, 1000);
@@ -181,21 +203,30 @@
 
         document.getElementById('taskForm').onsubmit = function(e) {
             e.preventDefault();
-            const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            logs.unshift({ 
-                t: new Date().toLocaleDateString('en-GB'), e: currentUser, 
-                c: document.getElementById('client-list').value, 
-                cat: document.getElementById('category').value, st: document.getElementById('status').value 
-            });
-            localStorage.setItem('coniah_logs', JSON.stringify(logs));
-            alert("Report Synced!");
-            this.reset();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "Syncing...";
+            btn.style.opacity = "0.5";
+
+            setTimeout(() => {
+                const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
+                logs.unshift({ 
+                    t: new Date().toLocaleDateString('en-GB'), e: currentUser, 
+                    c: document.getElementById('client-list').value, 
+                    cat: document.getElementById('category').value, st: document.getElementById('status').value 
+                });
+                localStorage.setItem('coniah_logs', JSON.stringify(logs));
+                
+                btn.innerText = "Sync Job to Cloud";
+                btn.style.opacity = "1";
+                showFlash(); // Trigger the green flash message
+                this.reset();
+            }, 800);
         };
 
         function renderLiveOps() {
             const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
             const active = logs.filter(l => l.st !== "Completed");
-            document.getElementById('liveOpsBody').innerHTML = active.map(l => `<tr><td><b>${l.e}</b></td><td>${l.c}</td><td>${l.cat}</td><td><span class="badge badge-prog">${l.st}</span></td></tr>`).join('') || "<tr><td colspan='4'>Clear.</td></tr>";
+            document.getElementById('liveOpsBody').innerHTML = active.map(l => `<tr><td><b>${l.e}</b></td><td>${l.c}</td><td>${l.cat}</td><td><span class="badge">${l.st}</span></td></tr>`).join('') || "<tr><td colspan='4'>Clear.</td></tr>";
         }
 
         function renderAdminMaster() {
@@ -205,7 +236,12 @@
 
         function renderTargets() {
             const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
-            document.getElementById('target-list').innerHTML = targets.map(t => `<div class="job-card"><b>${t.title}</b><br><small>📅 ${t.date}</small></div>`).join('') || "<p>No schedule.</p>";
+            document.getElementById('target-list').innerHTML = targets.map((t, idx) => `
+                <div class="job-card">
+                    <b>${t.title}</b><br><small>📅 ${t.date}</small>
+                    ${currentUser === 'ADMIN' ? `<br><small onclick="deleteTarget(${idx})" style="color:red; cursor:pointer;">[REMOVE]</small>` : ''}
+                </div>
+            `).join('') || "<p>No schedule.</p>";
         }
 
         function saveNewTarget() {
@@ -217,6 +253,13 @@
             localStorage.setItem('coniah_targets', JSON.stringify(targets));
             renderTargets();
             document.getElementById('new-target-title').value = "";
+        }
+
+        function deleteTarget(idx) {
+            let targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
+            targets.splice(idx, 1);
+            localStorage.setItem('coniah_targets', JSON.stringify(targets));
+            renderTargets();
         }
     </script>
 </body>
