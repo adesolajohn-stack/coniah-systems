@@ -3,52 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CONIAH PRO | Mobile Ready</title>
+    <title>CONIAH PRO | Team Command</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --slate: #0f172a; --gold: #d4af37; --light-bg: #f8fafc; --border: #e2e8f0; --text: #334155; --danger: #ef4444; --success: #22c55e; --info: #3b82f6; }
-        
         * { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; margin: 0; background: var(--light-bg); color: var(--text); display: flex; flex-direction: row; height: 100vh; overflow: hidden; }
 
-        /* LOGIN SCREEN */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 9999; background: var(--slate); padding: 20px; }
         .login-box { background: white; padding: 2rem; border-radius: 12px; width: 100%; max-width: 350px; text-align: center; border-top: 4px solid var(--gold); }
-        .login-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid var(--border); }
-        .btn-action { background: var(--gold); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; margin-top: 10px; }
+        .login-box input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid var(--border); outline: none; }
+        .btn-action { background: var(--gold); color: white; border: none; padding: 14px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
 
-        /* NAVIGATION - Hidden on mobile, shown via menu button if needed, but for now we keep it simple */
         nav { width: 240px; background: var(--slate); color: white; padding: 1.5rem 1rem; display: flex; flex-direction: column; flex-shrink: 0; }
         .nav-logo { font-weight: 800; color: var(--gold); font-size: 1.1rem; margin-bottom: 1.5rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-        .nav-item { padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; font-size: 0.85rem; transition: 0.2s; }
+        .nav-item { padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; font-size: 0.85rem; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
         .nav-item.active { background: var(--gold); color: white; font-weight: 700; }
 
         main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         .header-bar { min-height: 60px; background: white; border-bottom: 1px solid var(--border); padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        
         .dashboard-layout { display: flex; flex: 1; overflow: hidden; }
         .work-area { flex: 2; padding: 1.5rem; overflow-y: auto; }
-        .schedule-column { flex: 1; background: white; border-left: 1px solid var(--border); padding: 1.5rem; overflow-y: auto; min-width: 300px; }
+        .schedule-column { flex: 1; background: white; border-left: 1px solid var(--border); padding: 1.5rem; overflow-y: auto; min-width: 320px; }
 
-        /* MOBILE FIXES (Media Query) */
         @media (max-width: 850px) {
             body { flex-direction: column; overflow-y: auto; height: auto; }
-            nav { width: 100%; height: auto; padding: 10px; }
-            .nav-item { display: inline-block; margin-right: 5px; padding: 8px 12px; font-size: 0.75rem; }
+            nav { width: 100%; height: auto; padding: 10px; border-bottom: 2px solid var(--gold); }
+            .nav-item { display: inline-flex; margin-right: 5px; padding: 8px 12px; font-size: 0.75rem; white-space: nowrap; }
             .dashboard-layout { flex-direction: column; overflow: visible; }
             main { height: auto; overflow: visible; }
             .work-area, .schedule-column { width: 100%; border: none; height: auto; overflow: visible; padding: 1rem; }
-            .header-bar { padding: 10px; font-size: 0.8rem; }
+            .header-bar { padding: 10px; font-size: 0.8rem; background: #f1f5f9; }
         }
 
-        /* TABLES & CARDS */
-        .table-wrap { overflow-x: auto; width: 100%; }
+        .table-wrap { overflow-x: auto; width: 100%; background: white; border-radius: 8px; border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; min-width: 500px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; }
-        .job-card { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); }
-        .section-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid var(--gold); display: inline-block; }
+        th { text-align: left; padding: 12px; background: #f8fafc; font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
+        .job-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .section-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid var(--gold); display: inline-block; color: var(--slate); }
 
-        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; font-family: inherit; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
         .badge-prog { background: #dbeafe; color: #1e40af; }
     </style>
@@ -57,102 +52,117 @@
 
     <div id="login-overlay">
         <div class="login-box">
-            <h2 style="margin:0; color:var(--slate);">CONIAH PRO</h2>
+            <h2 style="margin:0; color:var(--slate); font-weight: 800;">CONIAH PRO</h2>
+            <p style="font-size:0.65rem; color:#94a3b8; margin-bottom:20px; letter-spacing: 1px;">SYSTEMS & LOGISTICS</p>
             <input type="text" id="user-in" placeholder="Username">
             <input type="password" id="pass-in" placeholder="Password">
-            <button class="btn-action" onclick="handleLogin()">Authorize</button>
+            <button class="btn-action" onclick="handleLogin()">Authorize Access</button>
         </div>
     </div>
 
-    <nav id="sidebar">
+    <nav>
         <div class="nav-logo">CONIAH PRO</div>
         <div class="nav-item active" onclick="switchView('log-view', this)">📝 Log Job</div>
         <div class="nav-item" onclick="switchView('live-ops-view', this)">⚡ Live Ops</div>
-        <div class="nav-item" onclick="switchView('track-view', this)">📂 My History</div>
         <div id="admin-nav" class="nav-item" style="display:none;" onclick="switchView('history-view', this)">👑 Master DB</div>
-        <div class="nav-item" style="margin-top:20px; color:#fca5a5;" onclick="location.reload()">🔒 Logout</div>
+        <div class="nav-item" style="margin-top:auto; color:#fca5a5;" onclick="location.reload()">🔒 Logout</div>
     </nav>
 
     <main>
         <div class="header-bar">
-            <div id="user-display" style="font-weight:700; color: var(--slate);"></div>
-            <div id="mini-clock" style="font-weight:800; color:var(--gold);">00:00:00</div>
+            <div id="user-display" style="font-weight:700; color: var(--slate); font-size: 0.85rem;"></div>
+            <div id="mini-clock" style="font-weight:800; color:var(--gold); font-size: 0.85rem;">00:00:00</div>
         </div>
 
         <div class="dashboard-layout">
             <div class="work-area">
                 <div id="log-view" class="view active-view">
-                    <h3 class="section-title">New Report</h3>
+                    <h3 class="section-title">New Activity Report</h3>
                     <form id="taskForm">
                         <select id="client-list" required>
-                            <option value="">-- Client --</option>
-                            <option>ADIGUN OGUNSEITAN</option><option>CUSTODIAN INSURANCE</option>
-                            <option>FAMILY 1ST</option><option>FARINDE OLATEJU</option>
-                            <option>LAGOS CITY COLLEGE</option><option>YABATECH</option>
+                            <option value="">-- Choose Client --</option>
+                            <option>ADIGUN OGUNSEITAN</option>
+                            <option>CUSTODIAN INSURANCE</option>
+                            <option>FAMILY 1ST</option>
+                            <option>FARINDE OLATEJU</option>
+                            <option>GIWA OSAGIE & CO</option>
+                            <option>HABCOM LIMITED</option>
+                            <option>INTERSTATE SECURITIES LTD</option>
+                            <option>EMDI CAPACITY</option>
+                            <option>ILUPEJU LIBRARY</option>
+                            <option>LAGOS CITY COLLEGE</option>
                         </select>
-                        <input type="text" id="serial" placeholder="Serial No">
+                        <input type="text" id="serial" placeholder="Asset Serial No">
                         <select id="category">
-                            <option>Printer Repair</option><option>Printer Maintenance</option>
-                            <option>System Repair</option><option>Preventive Maintenance</option>
+                            <option>Repair Job</option>
+                            <option>Printer Maintenance</option>
+                            <option>Printer Repair</option>
+                            <option>Preventive Maintenance</option>
+                            <option>New System Setup</option>
+                            <option>Networking Support</option>
                         </select>
                         <select id="status">
                             <option value="Completed">Completed</option>
                             <option value="In-Progress">In-Progress</option>
+                            <option value="Pending">Pending</option>
                         </select>
-                        <textarea id="sao" rows="3" placeholder="Description..."></textarea>
-                        <button type="submit" class="btn-action">Submit Job</button>
+                        <textarea id="sao" rows="3" placeholder="Notes..."></textarea>
+                        <button type="submit" class="btn-action">Sync Job to Cloud</button>
                     </form>
                 </div>
 
-                <div id="live-ops-view" class="view">
-                    <h3 class="section-title">Live Team Ops</h3>
+                <div id="live-ops-view" class="view" style="display:none;">
+                    <h3 class="section-title">Team Live Operations</h3>
                     <div class="table-wrap">
                         <table>
-                            <thead><tr><th>Engr</th><th>Client</th><th>Status</th></tr></thead>
+                            <thead><tr><th>Engineer</th><th>Client</th><th>Task</th><th>Status</th></tr></thead>
                             <tbody id="liveOpsBody"></tbody>
                         </table>
                     </div>
                 </div>
 
-                <div id="track-view" class="view">
-                    <h3 class="section-title">My History</h3>
+                <div id="history-view" class="view" style="display:none;">
+                    <h3 class="section-title">Master Database</h3>
                     <div class="table-wrap">
-                        <table id="myTable"><tbody id="myHistoryBody"></tbody></table>
+                        <table>
+                            <thead><tr><th>Date</th><th>Engineer</th><th>Client</th><th>Status</th></tr></thead>
+                            <tbody id="adminBody"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
             <div class="schedule-column">
-                <h3 class="section-title">Monthly Targets</h3>
+                <h3 class="section-title">Monthly Schedule</h3>
                 <div id="target-list"></div>
-                <div id="admin-target-area" class="admin-only-box" style="display:none; margin-top:20px;">
-                    <b>ADMIN: POST JOB</b>
+                <div id="admin-target-area" class="admin-only-box" style="display:none; margin-top:2rem; padding:15px; background:#fffbeb; border:1px dashed var(--gold); border-radius:8px;">
+                    <b style="font-size:0.75rem; display:block; margin-bottom:10px;">ADMIN: ASSIGN TARGET</b>
                     <input type="date" id="new-target-date">
-                    <input type="text" id="new-target-title" placeholder="Client Name">
-                    <button class="btn-action" onclick="saveNewTarget()">Post Notice</button>
+                    <input type="text" id="new-target-title" placeholder="Client/Location">
+                    <button class="btn-action" style="font-size:0.7rem; padding:8px;" onclick="saveNewTarget()">Post to Team</button>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        const logins = {"ADMIN": "coniah247", "Engr. Rasheed": "12345", "Engr. David": "12345"};
+        const logins = {"ADMIN": "coniah247", "Engr. Rasheed": "12345", "Engr. David": "12345", "Engr. Segun": "12345"};
         let currentUser = "";
 
         function handleLogin() {
             const u = document.getElementById('user-in').value;
             const p = document.getElementById('pass-in').value;
-            if (logins[u] === p) {
+            if (logins[u] && logins[u] === p) {
                 currentUser = u;
                 document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('user-display').innerText = u;
+                document.getElementById('user-display').innerText = `ENGR: ${u.toUpperCase()}`;
                 if (u === "ADMIN") {
-                    document.getElementById('admin-nav').style.display = 'block';
+                    document.getElementById('admin-nav').style.display = 'flex';
                     document.getElementById('admin-target-area').style.display = 'block';
                 }
                 updateClock();
                 renderTargets();
-            } else { alert("ACCESS DENIED"); }
+            } else { alert("INVALID CREDENTIALS"); }
         }
 
         function updateClock() {
@@ -161,40 +171,52 @@
         }
 
         function switchView(viewId, el) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active-view');
+            document.getElementById(viewId).style.display = 'block';
             el.classList.add('active');
             if(viewId === 'live-ops-view') renderLiveOps();
+            if(viewId === 'history-view') renderAdminMaster();
         }
 
         document.getElementById('taskForm').onsubmit = function(e) {
             e.preventDefault();
             const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
-            logs.unshift({ t: new Date().toLocaleDateString('en-GB'), e: currentUser, c: document.getElementById('client-list').value, st: document.getElementById('status').value });
+            logs.unshift({ 
+                t: new Date().toLocaleDateString('en-GB'), e: currentUser, 
+                c: document.getElementById('client-list').value, 
+                cat: document.getElementById('category').value, st: document.getElementById('status').value 
+            });
             localStorage.setItem('coniah_logs', JSON.stringify(logs));
-            alert("Job Logged!");
+            alert("Report Synced!");
             this.reset();
         };
 
         function renderLiveOps() {
             const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
             const active = logs.filter(l => l.st !== "Completed");
-            document.getElementById('liveOpsBody').innerHTML = active.map(l => `<tr><td>${l.e}</td><td>${l.c}</td><td><span class="badge badge-prog">${l.st}</span></td></tr>`).join('') || "<tr><td colspan='3'>No active jobs</td></tr>";
+            document.getElementById('liveOpsBody').innerHTML = active.map(l => `<tr><td><b>${l.e}</b></td><td>${l.c}</td><td>${l.cat}</td><td><span class="badge badge-prog">${l.st}</span></td></tr>`).join('') || "<tr><td colspan='4'>Clear.</td></tr>";
+        }
+
+        function renderAdminMaster() {
+            const logs = JSON.parse(localStorage.getItem('coniah_logs')) || [];
+            document.getElementById('adminBody').innerHTML = logs.map(l => `<tr><td>${l.t}</td><td>${l.e}</td><td>${l.c}</td><td>${l.st}</td></tr>`).join('');
         }
 
         function renderTargets() {
             const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
-            document.getElementById('target-list').innerHTML = targets.map(t => `<div class="job-card"><b>${t.title}</b><br><small>${t.date}</small></div>`).join('');
+            document.getElementById('target-list').innerHTML = targets.map(t => `<div class="job-card"><b>${t.title}</b><br><small>📅 ${t.date}</small></div>`).join('') || "<p>No schedule.</p>";
         }
 
         function saveNewTarget() {
             const title = document.getElementById('new-target-title').value;
             const date = document.getElementById('new-target-date').value;
+            if(!title || !date) return;
             const targets = JSON.parse(localStorage.getItem('coniah_targets')) || [];
             targets.push({title, date});
             localStorage.setItem('coniah_targets', JSON.stringify(targets));
             renderTargets();
+            document.getElementById('new-target-title').value = "";
         }
     </script>
 </body>
